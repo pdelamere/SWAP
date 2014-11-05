@@ -121,12 +121,17 @@ if (wh(0) gt -1) then begin
       ii = fix(vp(wh(l),0)/dv) + (nn/(2*dv))
       jj = fix(vp(wh(l),1)/dv) + (nn/(2*dv))
       kk = fix(vp(wh(l),2)/dv) + (nn/(2*dv))
+;      vxyp(ii,jj) = 1/beta_p(wh(l)) + vxyp(ii,jj)
+;      vxzp(ii,kk) = 1/beta_p(wh(l)) + vxzp(ii,kk)
+;      vyzp(jj,kk) = 1/beta_p(wh(l)) + vyzp(jj,kk)
       vxyp(ii,jj) = 1.0 + vxyp(ii,jj)
       vxzp(ii,kk) = 1.0 + vxzp(ii,kk)
       vyzp(jj,kk) = 1.0 + vyzp(jj,kk)
 
+
       ii = fix(sqrt((vp(wh(l),0)-400.)^2 + vp(wh(l),1)^2)/dv) + (nn/(2*dv))
       ; do this in the plasma rest frame
+;      v_perp_par(kk,ii) = 1/beta_p(wh(l)) + v_perp_par(kk,ii)
       v_perp_par(kk,ii) = 1.0 + v_perp_par(kk,ii)
 
 ;      vpp = reform(vp(wh(l),*))
@@ -215,7 +220,7 @@ end
 
 mp=1.67e-27
 nfile = '1'
-nfm = 10
+nfm = 16
 procnum=1
 ndx = 4.0
 

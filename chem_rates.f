@@ -510,6 +510,151 @@ c Ionizes the neutral cloud with a 28 s time constant and fill particle
 c arrays, np, vp, up (ion particle density, velocity, 
 c and bulk velocity).   
 c----------------------------------------------------------------------
+      !include 'incurv.h'
+
+      real np(nx,ny,nz),
+     x     vp(Ni_max,3),
+     x     vp1(Ni_max,3),
+     x     xp(Ni_max,3),
+     x     input_p(3),
+     x     up(nx,ny,nz,3)
+
+      real function pad_ranf      
+      real uptot1(3),uptot2(3)
+c      integer*4 dNi         !# of new born ions created in dt
+c      real vol              !volume of grid cell
+
+      real r                !dist of particle to neutral cloud center
+      real t                !run time
+      real v                !neutral cloud velocity, r/t
+      real cx,cy,cz         !x,y,z coord of neutral cloud center
+      real theta,phi        !spherical coords used to get velocities
+      integer flg           !flag for while loop
+      real zsum             !sum along z to find cell for new_borns
+      real rnd              !random number
+      real n_source,vol_source
+c      real r_xyz       !radial distance
+c      real src(200)         !particle source distribution
+c      real Nofr(200)        !number of neutrals as func of r
+      real nnofr       !neutral density vs. r
+      real npofr       !plasma production rate vs. r
+      real Np_total         !total number of ions /s
+      real vol         !volume of shell vs. r
+      real vol_shell
+      real vol_shell_min
+      real intgl            !integral
+      integer rijk
+      real ddni
+      integer cnt, l1
+      
+      real ndot
+      ndot = 1e-6*nf_init*omega_p !normalized ionization rate
+
+      dNi = ndot*dt*beta*beta_pu*dx*dy*delz*nz
+
+      if (dNi .lt. 1.0) then 
+         if (dNi .gt. pad_ranf()) then 
+            dNi = 1.0
+            write(*,*) 'new ions...',dNi
+         endif
+      endif
+
+      dNi = nint(dNi)
+
+c      write(*,*) 'dNi...',dNi,ndot*dt*beta*beta_pu*dx*dy*delz,Ni_tot
+      l1 = Ni_tot+1
+
+      do l = l1,l1+dNi-1
+
+c         write(*,*) 'new ions....',l,dNi,Ni_tot
+         theta = pad_ranf()*2*PI
+         vp(l,1) = vsw+vsw*cos(theta) !+dvx
+         vp(l,2) = vsw*sin(theta) !+dvz 
+         vp(l,3) = 0.0
+
+         xp(l,1) = qx(1)+(1.0-pad_ranf())*(qx(nx-1)-qx(1))
+         xp(l,2) = qy(1)+(1.0-pad_ranf())*(qy(ny-1)-qy(1))
+         xp(l,3) = qz(1)+(1.0-pad_ranf())*(qz(nz-1)-qz(1))
+
+         i=0
+ 31      continue
+         i = i + 1
+         if (xp(l,1) .gt. qx(i)) go to 31 !find i on non-uniform 
+         i = i-1
+         ijkp(l,1)= i
+
+         ijkp(l,2) = floor(xp(l,2)/dy) 
+         
+         k=0
+ 30      continue
+         k = k + 1
+         if (xp(l,3) .gt. qz(k)) go to 30 !find k on non-uniform 
+         k = k-1
+         ijkp(l,3)= k
+
+         !add He++
+
+c         if (pad_ranf() .lt. 0.1) then 
+c            mrat(l) = 1.0/2.0
+c            m_arr(l) = mion*2.0
+c            beta_p(l) = beta_pu
+c         endif
+
+         !add protons
+
+c         if (pad_ranf() .ge. 0.1) then 
+            mrat(l) = 1.0
+            m_arr(l) = mion
+            beta_p(l) = beta_pu
+c         endif
+
+         
+
+         do m=1,3
+            vp1(l,m) = vp(l,m)
+            input_E = input_E + 
+     x           0.5*m_arr(l)*(vp(l,m)*km_to_m)**2 /
+     x           beta*beta_p(l)
+            input_p(m) = input_p(m) + m_arr(l)*vp(l,m)/
+     x           beta*beta_p(l)
+         enddo                     
+
+      enddo
+      
+c      write(*,*) 'total new ions in ionize....',my_rank,cnt,dNi         
+      call MPI_BARRIER(MPI_COMM_WORLD,ierr)
+
+
+      Ni_tot = Ni_tot + dNi
+
+
+c      do 60 l = l1,Ni_tot
+cc         write(*,*) 'l1...',l,l1,Ni_tot
+c         if ((ijkp(l,1) .gt. nx) .or. (ijkp(l,2) .gt. ny) .or. 
+c     x        (ijkp(l,3) .gt. nz)) then
+c            write(*,*) 'removing ion in ionize...',my_rank,ijkp(l,:)
+c            call remove_ion(xp,vp,vp1,l)
+            
+c         endif
+c 60   continue
+
+      call get_interp_weights(xp)
+      call update_np(np)
+      call update_up(vp,np,up)
+      
+      return
+      end SUBROUTINE Ionize_sw_mp
+c----------------------------------------------------------------------
+
+
+
+
+c----------------------------------------------------------------------
+      SUBROUTINE Ionize_sw_mp_1(np,vp,vp1,xp,m_tstep,input_p,up)
+c Ionizes the neutral cloud with a 28 s time constant and fill particle
+c arrays, np, vp, up (ion particle density, velocity, 
+c and bulk velocity).   
+c----------------------------------------------------------------------
 
       real np(nx,ny,nz),
      x     vp(Ni_max,3),
@@ -652,7 +797,7 @@ c         endif
       call update_up(vp,np,up)
       
       return
-      end SUBROUTINE Ionize_sw_mp
+      end SUBROUTINE Ionize_sw_mp_1
 c----------------------------------------------------------------------
 
 

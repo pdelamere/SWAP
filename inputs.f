@@ -63,6 +63,10 @@ c      PARAMETER (m_pu = 64.0)
       real m_top, m_bottom,m_heavy,np_bottom_proton
       real ppc !particles per cell
       
+      real beta_pu
+      PARAMETER (beta_pu = 2000.0)
+      
+      real omega_p !ion gyrofrequency
 
 c electron ion collision frequency
       real nu_init,lww1,lww2
@@ -123,6 +127,8 @@ c----------------------------------------------------------------
 
       mion = ion_amu*1.67e-27
 
+      omega_p = q*b0_init/mion
+
       lambda_i = (3e8/
      x            sqrt((nf_init/1e9)*q*q/(8.85e-12*mion)))/1e3
 
@@ -159,7 +165,7 @@ c----------------------------------------------------------------
       m_bottom = mion
       Lo = 4.0*dx             !gradient scale length of boundary
 
-      nu_init = nu_init_frac*q*b0_init/mion
+      nu_init = nu_init_frac*omega_p
 
       alpha = (mu0/1e3)*q*(q/mion) !mH...determines particle scaling
 

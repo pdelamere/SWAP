@@ -376,11 +376,11 @@ c======================================================================
          endif
 
          !Ionize cloud and calculate ion density
-c         if (Ni_tot .lt. Ni_max) then
+         if (Ni_tot .lt. Ni_max) then
 cc         call Ionize_pluto(np,vp,vp1,xp,m,input_p,up)
 c         call Ionize_pluto_mp(np,vp,vp1,xp,m,input_p,up)
-c         call Ionize_sw_mp(np,vp,vp1,xp,m,input_p,up)
-c         endif
+            call Ionize_sw_mp(np,vp,vp1,xp,m,input_p,up)
+         endif
 
          call get_interp_weights(xp)
          call update_np(np)             !np at n+1/2

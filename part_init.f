@@ -496,7 +496,7 @@ c add pickup distribution
 
             m_arr(l) = mion
             mrat(l) = 1.0
-            beta_p(l) = 200.0
+            beta_p(l) = beta_pu
 
             i=0
  71         continue
