@@ -136,7 +136,9 @@ c----------------------------------------------------------------------
 c Initialize all variables
 c----------------------------------------------------------------------
 
-      Ni_tot = Ni_tot_0
+c      Ni_tot = Ni_tot_0
+      Ni_tot = nx*nz*(ppc/procnum)
+      Ni_tot_0 = Ni_tot
       Ni_tot_sw = Ni_tot
       Ni_tot_sys = Ni_tot*procnum
 
@@ -145,7 +147,6 @@ c----------------------------------------------------------------------
       write(*,*) 'Particles per cell....',Ni_tot_sys/(nx*nz)
       write(*,*) ' '
       endif
-      
 
       mstart = 0
       ndiag = 0
@@ -172,23 +173,22 @@ c     nfp1(i,j,k) = nf_init*0.05
                   input_bill = 0.0
  66            continue
             endif
-            
+
       call grd7()
       call grd6_setup(b0,bt,b12,b1,b1p2,nu)
-
       call get_beta()
 
       input_E = 0.0
 
       call MPI_Barrier(MPI_COMM_WORLD,ierr)
 
-c      call sw_part_setup_maxwl_mix(np,vp,vp1,xp,input_p,up,np_t_flg,
-c     x                         np_b_flg)
-
+      call sw_part_setup_maxwl_mix(np,vp,vp1,xp,input_p,up,np_t_flg,
+     x                         np_b_flg)
+      
 c      call load_Maxwellian(np,vp,vp1,xp,input_p,up,
 c     x                       vth_bottom, Ni_tot)
-      call load_aniso_Maxwellian(np,vp,vp1,xp,input_p,up,
-     x                       vth_bottom, Ni_tot)
+c      call load_aniso_Maxwellian(np,vp,vp1,xp,input_p,up,
+c     x                       vth_bottom, Ni_tot)
 
 
       Ni_tot_sys = Ni_tot*procnum
@@ -319,6 +319,9 @@ c     x         form='unformatted')
          open(315,file=trim(out_dir)//'c.mrat_0.dat',status='unknown',
      x        form='unformatted')
 
+         open(317,file=trim(out_dir)//'c.beta_p_0.dat',status='unknown',
+     x        form='unformatted')
+
          open(320,file=trim(out_dir)//'c.np_wake.dat',
      x        status='unknown',form='unformatted')
          
@@ -350,6 +353,11 @@ c     x         form='unformatted')
          open(315,file=trim(out_dir)//'c.mrat_'//trim(filenum(my_rank))
      x        //'.dat',
      x        status='unknown',form='unformatted')
+
+        open(317,file=trim(out_dir)//'c.beta_p_'//trim(filenum(my_rank))
+     x        //'.dat',
+     x        status='unknown',form='unformatted')
+
 c         write(*,*) 'filename...',
 c     x          my_rank,'c.xp_'//trim(filenum(my_rank))//'.dat'
 
@@ -540,6 +548,8 @@ c     write(150) Ef
                write(310) vp
                write(315) m
                write(315) mrat
+               write(317) m
+               write(317) beta_p
                write(330) m
                write(330) up_t
                write(340) m
@@ -563,6 +573,8 @@ c     write(350) (pf/nf)/1.6e-25  !saves in units of eV
                write(310) vp
                write(315) m
                write(315) mrat
+               write(317) m
+               write(317) beta_p
                ndiag = 0
             endif
          endif
@@ -624,6 +636,7 @@ c          close(211)
           close(305)
           close(310)
           close(315)
+          close(317)
           close(320)
           close(330)
           close(340)

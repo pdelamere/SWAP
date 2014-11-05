@@ -1815,7 +1815,7 @@ c     endif
          enddo
       enddo
       
-      write(*,*) 'subcycle time steps...',ntf,dtsub
+c      write(*,*) 'subcycle time steps...',ntf,dtsub
       
 
       return

@@ -82,8 +82,8 @@ c      real etar(nx,ny,nz,3)
 
 c variable for particle scale
 
-      real beta, dNi, dNi_sw
-      common /scale/ beta, dNi, dNi_sw
+      real beta, beta_p(Ni_max), dNi, dNi_sw
+      common /scale/ beta, beta_p, dNi, dNi_sw
 
 c mass array for multi-ion species
       real mrat,m_arr

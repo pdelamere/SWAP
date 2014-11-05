@@ -61,7 +61,8 @@ c      PARAMETER (m_pu = 64.0)
       real np_top,np_bottom
       real b0_top,b0_bottom,Lo,vth_top,vth_bottom,vth_max
       real m_top, m_bottom,m_heavy,np_bottom_proton
-
+      real ppc !particles per cell
+      
 
 c electron ion collision frequency
       real nu_init,lww1,lww2
@@ -106,6 +107,8 @@ c      write(*,*) 'Ni_max....',Ni_max
       write(*,*) 'dx_frac...........',dx_frac
       read(100,*) nu_init_frac
       write(*,*) 'nu_init_frac......',nu_init_frac
+      read(100,*) ppc
+      write(*,*) 'part per cell.....',ppc
       read(100,*) out_dir
       write(*,*) 'output dir........',out_dir
      

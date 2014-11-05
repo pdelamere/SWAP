@@ -22,7 +22,8 @@ CVD$R VECTOR
       real vp1(Ni_max,3)
 
       do 5 m=1,3   !remove ion energy from total input energy
-         input_E = input_E-0.5*m_arr(l)*(vp(ion_l,m)*km_to_m)**2 /beta
+         input_E = input_E-0.5*m_arr(l)*(vp(ion_l,m)*km_to_m)**2 /
+     x        beta*beta_p(l)
  5    continue
 
       do 10 l=ion_l,Ni_tot-1
@@ -688,7 +689,8 @@ c 40                  continue
 c add energy
                      do m=1,3
                         input_E = input_E + 
-     x                       0.5*m_arr(l)*(vp(l,m)*km_to_m)**2 /beta
+     x                       0.5*m_arr(l)*(vp(l,m)*km_to_m)**2 /
+     x                       beta*beta_p(l)
 c                        input_p(m) = input_p(m) - m_arr(l)*vp(l,m)/beta
                      enddo         
 
@@ -795,7 +797,8 @@ c 45                  continue
 c add energy
                      do m=1,3
                         input_E = input_E + 
-     x                       0.5*m_arr(l)*(vp(l,m)*km_to_m)**2 /beta
+     x                       0.5*m_arr(l)*(vp(l,m)*km_to_m)**2 /
+     x                       beta*beta_p(l)
 c                        input_p(m) = input_p(m) - m_arr(l)*vp(l,m)/beta
                      enddo         
 
@@ -946,7 +949,8 @@ c 44                  continue
 c add energy
                      do m=1,3
                         input_E = input_E + 
-     x                       0.5*m_arr(l)*(vp(l,m)*km_to_m)**2 /beta
+     x                       0.5*m_arr(l)*(vp(l,m)*km_to_m)**2 /
+     x                       beta*beta_p(l)
 c                        input_p(m) = input_p(m) - m_arr(l)*vp(l,m)/beta
                      enddo         
 
@@ -1068,7 +1072,8 @@ c 50                  continue
 c add energy
                      do m=1,3
                         input_E = input_E + 
-     x                       0.5*m_arr(l)*(vp(l,m)*km_to_m)**2 /beta
+     x                       0.5*m_arr(l)*(vp(l,m)*km_to_m)**2 /
+     x                       beta*beta_p(l)
 c                        input_p(m) = input_p(m) - m_arr(l)*vp(l,m)/beta
                      enddo         
 
@@ -1472,7 +1477,7 @@ c         if (jp .ge. ny) jp = 2      !periodic boundary conditions
 c         if (kp .ge. nz) kp = 2      !periodic boundary conditions
 
 c         volb = 1.0/(dx*dy*(qz(k+1)-qz(k))*beta)
-         volb = 1.0/(dx_grid(i)*dy_grid(j)*dz_grid(k)*beta)
+         volb = 1.0/(dx_grid(i)*dy_grid(j)*dz_grid(k)*beta*beta_p(l))
 c         volb = 1.0/((qx(ip)-qx(i))*(qy(jp)-qy(j))*(qz(kp)-qz(k))*beta)
 c         volb = dx*dy*dz_cell(k)*beta
 
@@ -1549,7 +1554,8 @@ c         if (kp .ge. nz) kp = 2      !periodic boundary conditions
 
 c         volb = dx*dy*(qz(k+1)-qz(k))*beta
 c         volb = dx*dy*dz_cell(k)*beta
-         volb = (qx(ip)-qx(i))*(qy(jp)-qy(j))*(qz(kp)-qz(k))*beta
+         volb = (qx(ip)-qx(i))*(qy(jp)-qy(j))*(qz(kp)-qz(k))*
+     x        beta*beta_p(l)
 
          mnp(i,j,k) = mnp(i,j,k) + (wght(l,1)/mrat(l))/volb
          mnp(ip,j,k) = mnp(ip,j,k) + (wght(l,2)/mrat(l))/volb
@@ -1683,7 +1689,8 @@ c         if (kp .ge. nz) kp = 2      !periodic boundary conditions
 
 
 c         volb = dx*dy*(qz(kp)-qz(k))*beta
-         volb = (qx(ip)-qx(i))*(qy(jp)-qy(j))*(qz(kp)-qz(k))*beta
+         volb = (qx(ip)-qx(i))*(qy(jp)-qy(j))*(qz(kp)-qz(k))*
+     x        beta*beta_p(l)
 c         volb = dx_grid(i)*dy_grid(j)*dz_grid(k)*beta
 c         volb = dx*dy*dz_cell(k)*beta
       
@@ -2067,7 +2074,8 @@ c         if (kp .ge. nz) kp = 2      !periodic boundary conditions
 
 c         volb = dx*dy*(qz(k+1)-qz(k))*beta
 c         volb = dx*dy*dz_cell(k)*beta
-         volb = (qx(ip)-qx(i))*(qy(jp)-qy(j))*(qz(kp)-qz(k))*beta
+         volb = (qx(ip)-qx(i))*(qy(jp)-qy(j))*(qz(kp)-qz(k))*
+     x        beta*beta_p(l)
 
 
          np(i,j,k) = np(i,j,k) + flg(l)*wght(l,1)/volb
@@ -2143,7 +2151,8 @@ c      endwhere
          kp = k+1
 
 c         volb = dx*dy*dz_cell(k)*beta
-         volb = (qx(ip)-qx(i))*(qy(jp)-qy(j))*(qz(kp)-qz(k))*beta
+         volb = (qx(ip)-qx(i))*(qy(jp)-qy(j))*(qz(kp)-qz(k))*
+     x        beta*beta_p(l)
       
          if (np(i,j,k) .gt. 0.0) then
          nvolb = np(i,j,k)*volb
@@ -2298,7 +2307,8 @@ c      enddo
          kp = k+1
 
 c         volb = dx*dy*dz_cell(k)*beta
-         volb = (qx(ip)-qx(i))*(qy(jp)-qy(j))*(qz(kp)-qz(k))*beta
+         volb = (qx(ip)-qx(i))*(qy(jp)-qy(j))*(qz(kp)-qz(k))*
+     x        beta*beta_p(l)
       
          if (np(i,j,k) .gt. 0.0) then
          nvolb = np(i,j,k)*volb
@@ -2409,7 +2419,8 @@ c use for periodic boundary conditions
          kp = k+1
 
 c         volb = dx*dy*dz_cell(k)*beta
-         volb = (qx(ip)-qx(i))*(qy(jp)-qy(j))*(qz(kp)-qz(k))*beta
+         volb = (qx(ip)-qx(i))*(qy(jp)-qy(j))*(qz(kp)-qz(k))*
+     x        beta*beta_p(l)
       
          if (np(i,j,k) .gt. 0.0) then
          nvolb = np(i,j,k)*volb

@@ -156,8 +156,6 @@ c      include 'incurv.h'
       rj=ny/2
       ri=nx/2
 
-
-
       do 20 j=1,ny
          qy(j) = j*dy
          dy_grid(j) = dy
@@ -297,6 +295,7 @@ c      open(40,file='coord.dat',status='unknown',form='unformatted')
       write(40) dz_grid
       write(40) dz_cell
       close(40)
+
 
       return
       end subroutine grd7
